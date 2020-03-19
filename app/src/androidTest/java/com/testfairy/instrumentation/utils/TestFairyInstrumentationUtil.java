@@ -58,8 +58,8 @@ public class TestFairyInstrumentationUtil {
 	 * @param wrapper
 	 * @throws RuntimeException
 	 */
-	public static void wrapInstrumentation(InstrumentationWrapper wrapper) throws RuntimeException {
-		wrapInstrumentation(wrapper, null);
+	public static void wrapInstrumentation(String name, InstrumentationWrapper wrapper) throws RuntimeException {
+		wrapInstrumentation(name, wrapper, null);
 	}
 
 	/**
@@ -69,9 +69,9 @@ public class TestFairyInstrumentationUtil {
 	 * @param options
 	 * @throws RuntimeException
 	 */
-	public static void wrapInstrumentation(InstrumentationWrapper wrapper, Map<String, String> options) throws RuntimeException {
+	public static void wrapInstrumentation(String name, InstrumentationWrapper wrapper, Map<String, String> options) throws RuntimeException {
 		try {
-			startInstrumentation(options);
+			startInstrumentation(name, options);
 			wrapper.onRecord();
 		} finally {
 			stopInstrumentation();
@@ -81,15 +81,15 @@ public class TestFairyInstrumentationUtil {
 	/**
 	 * Starts an instrumentation.
 	 */
-	public static void startInstrumentation() {
-		startInstrumentation(null);
+	public static void startInstrumentation(String name) {
+		startInstrumentation(name, null);
 	}
 
 	/**
 	 * Starts an instrumentation.
 	 * @param options
 	 */
-	public static void startInstrumentation(Map<String, String> options) {
+	public static void startInstrumentation(String name, Map<String, String> options) {
 		stopInstrumentation();
 
 		final Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
@@ -103,6 +103,10 @@ public class TestFairyInstrumentationUtil {
 			}
 		});
 
+		if (name != null) {
+			TestFairy.setUserId(name);
+		}
+
 		if (options != null) {
 			TestFairy.begin(context, APP_TOKEN, options);
 		} else {
@@ -114,6 +118,8 @@ public class TestFairyInstrumentationUtil {
 		if (!sessionStartedOrFailed.value) {
 			Assert.fail("Session could not be started.");
 		}
+
+		safeSleep(1000);
 	}
 
 	/**
@@ -123,8 +129,11 @@ public class TestFairyInstrumentationUtil {
 		TestFairy.stop();
 	}
 
-
-	private static void safeSleep(long ms) {
+	/**
+	 * Safely sleep to pause test thread.
+	 * @param ms
+	 */
+	public static void safeSleep(long ms) {
 		try {
 			Thread.sleep(ms);
 		} catch (InterruptedException ie) {

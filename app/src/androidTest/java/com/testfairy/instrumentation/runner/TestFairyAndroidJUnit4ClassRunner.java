@@ -1,5 +1,6 @@
 package com.testfairy.instrumentation.runner;
 
+import com.testfairy.TestFairy;
 import com.testfairy.instrumentation.utils.TestFairyInstrumentationUtil;
 
 import org.junit.runner.Description;
@@ -33,7 +34,23 @@ public class TestFairyAndroidJUnit4ClassRunner extends AndroidJUnit4ClassRunner 
 		@Override
 		public void testStarted(Description description) throws Exception {
 			super.testStarted(description);
-			TestFairyInstrumentationUtil.startInstrumentation();
+
+			String name = null;
+
+			String className = description.getClassName();
+			String methodName = description.getMethodName();
+			String displayName = description.getDisplayName();
+
+			if (className != null && methodName != null) {
+				String[] split = className.split("\\.");
+				name = split[split.length - 1] + "." + methodName;
+			} else if (displayName != null) {
+				name = displayName;
+			} else {
+				name = description.toString();
+			}
+
+			TestFairyInstrumentationUtil.startInstrumentation(name);
 		}
 
 		@Override

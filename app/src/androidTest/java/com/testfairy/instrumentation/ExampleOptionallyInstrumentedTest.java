@@ -4,7 +4,9 @@ import android.content.Context;
 
 import com.testfairy.instrumentation.utils.TestFairyInstrumentationUtil;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -17,6 +19,9 @@ import static org.junit.Assert.assertEquals;
  */
 public class ExampleOptionallyInstrumentedTest extends ExampleTestsBase {
 
+	@Rule
+	public TestName testName = new TestName();
+
 	@Test
 	public void testAppContextPackageNameWithoutTestFairy() {
 		// Context of the app under test.
@@ -27,7 +32,8 @@ public class ExampleOptionallyInstrumentedTest extends ExampleTestsBase {
 
 	@Test
 	public void testAppContextPackageNameWithTestFairy() {
-		TestFairyInstrumentationUtil.wrapInstrumentation(new TestFairyInstrumentationUtil.InstrumentationWrapper() {
+		String name = String.format("%s.%s", getClass().getSimpleName(), testName.getMethodName());
+		TestFairyInstrumentationUtil.wrapInstrumentation(name, new TestFairyInstrumentationUtil.InstrumentationWrapper() {
 			@Override
 			public void onRecord() {
 				// Context of the app under test.

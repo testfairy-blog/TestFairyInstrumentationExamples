@@ -9,6 +9,8 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import com.testfairy.instrumentation.utils.TestFairyInstrumentationUtil;
+
 import java.lang.reflect.Method;
 
 import androidx.test.espresso.IdlingPolicies;
@@ -28,6 +30,13 @@ public final class TestFairyAndroidJUnitRunner extends AndroidJUnitRunner {
 		super.onCreate(arguments);
 
 		Log.d(TAG, "Created.");
+	}
+
+	@Override
+	public void onDestroy() {
+		TestFairyInstrumentationUtil.safeSleep(2000);
+
+		super.onDestroy();
 	}
 
 	@Override
