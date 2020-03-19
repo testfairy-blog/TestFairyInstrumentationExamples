@@ -34,9 +34,12 @@ public final class TestFairyAndroidJUnitRunner extends AndroidJUnitRunner {
 
 	@Override
 	public void onDestroy() {
-		TestFairyInstrumentationUtil.safeSleep(2000);
+		// Allow TestFairy to send remaining sessions to server if forgotten.
+		TestFairyInstrumentationUtil.stopInstrumentation();
 
 		super.onDestroy();
+
+		Log.d(TAG, "Destroyed.");
 	}
 
 	@Override
@@ -58,22 +61,6 @@ public final class TestFairyAndroidJUnitRunner extends AndroidJUnitRunner {
 					IdlingPolicy dynamicIdlingResourceErrorPolicy = IdlingPolicies.getDynamicIdlingResourceErrorPolicy();
 					IdlingPolicies.setIdlingResourceTimeout(dynamicIdlingResourceErrorPolicy.getIdleTimeout() * 5, dynamicIdlingResourceErrorPolicy.getIdleTimeoutUnit());
 					IdlingPolicies.setMasterPolicyTimeout(dynamicIdlingResourceErrorPolicy.getIdleTimeout() * 5, dynamicIdlingResourceErrorPolicy.getIdleTimeoutUnit());
-				} catch (Throwable t) {
-					Log.e(TAG, "Exception during TestFairyAndroidJUnitRunner.onStart()", t);
-				}
-			}
-		});
-	}
-
-	@Override
-	public void finish(int resultCode, Bundle results) {
-		super.finish(resultCode, results);
-
-		runOnMainSync(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					enableAnimations(getContext());
 				} catch (Throwable t) {
 					Log.e(TAG, "Exception during TestFairyAndroidJUnitRunner.onStart()", t);
 				}

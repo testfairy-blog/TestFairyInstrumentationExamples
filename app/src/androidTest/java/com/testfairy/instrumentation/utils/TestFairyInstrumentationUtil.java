@@ -7,7 +7,10 @@ import com.testfairy.TestFairy;
 
 import org.junit.Assert;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -127,6 +130,8 @@ public class TestFairyInstrumentationUtil {
 	 */
 	public static void stopInstrumentation() {
 		TestFairy.stop();
+
+		waitForTestFairyThreadsStop(10000);
 	}
 
 	/**
@@ -139,6 +144,58 @@ public class TestFairyInstrumentationUtil {
 		} catch (InterruptedException ie) {
 			// ignored
 		}
+	}
+
+	////////////////////////////////////////////
+
+	private static void waitForTestFairyThreadsStop(int timeToWait) {
+		long end = System.currentTimeMillis() + timeToWait * 1000;
+		while (System.currentTimeMillis() < end) {
+			int count = countTestFairyAliveThreads();
+			if (count == 0) {
+				// matched expected number of threads
+				return;
+			}
+
+			safeSleep(1000);
+		}
+
+		Assert.assertEquals(0, countTestFairyAliveThreads());
+	}
+
+	private static int countTestFairyAliveThreads() {
+		List<String> stillAlive = new ArrayList<>();
+
+		List<Thread> threads = getTestFairyAliveThreads();
+		for (Thread thread : threads) {
+			if (thread.getName().contains("testfairy-log-watchdog") || thread.getName().contains("TestFairyAndroidJUnitRunner")) {
+				// "testfairy-log-watchdog" is a one time Runnable no need to kill.
+				continue;
+			}
+
+			stillAlive.add(thread.getName());
+		}
+
+		String threadNames = "";
+		if (stillAlive.size() > 0) {
+			threadNames += stillAlive.toString() + ", ";
+		}
+
+		return stillAlive.size();
+	}
+
+	private static List<Thread> getTestFairyAliveThreads() {
+		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+		Thread[] allThreads = threadSet.toArray(new Thread[threadSet.size()]);
+
+		ArrayList<Thread> threads = new ArrayList<>();
+		for (Thread thread : allThreads) {
+			if (thread.getName().contains("testfairy") && thread.isAlive() && !thread.getName().contains("TestFairyAndroidJUnitRunner")) {
+				threads.add(thread);
+			}
+		}
+
+		return threads;
 	}
 
 	private static void waitUntilValueHolderIsTrue(ValueHolder<Boolean> valueHolder, int timeoutInSeconds) {

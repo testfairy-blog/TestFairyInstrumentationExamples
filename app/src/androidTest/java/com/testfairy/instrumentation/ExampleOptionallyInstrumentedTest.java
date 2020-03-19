@@ -24,6 +24,8 @@ public class ExampleOptionallyInstrumentedTest extends ExampleTestsBase {
 
 	@Test
 	public void testAppContextPackageNameWithoutTestFairy() {
+		// This test won't be visible in TestFairy dashboard
+
 		// Context of the app under test.
 		Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
