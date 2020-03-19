@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 public class ExampleInstrumentedTest extends ExampleTestsBase {
 
 	@Test
-	public void testAppContextPackageName() {
+	public void testAppContextPackageNameAutomatically() {
 		// Context of the app under test.
 		Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 

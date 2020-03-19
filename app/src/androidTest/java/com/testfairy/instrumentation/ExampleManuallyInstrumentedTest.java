@@ -39,7 +39,7 @@ public class ExampleManuallyInstrumentedTest extends ExampleTestsBase {
 	}
 
 	@Test
-	public void testAppContextPackageName() throws InterruptedException {
+	public void testAppContextPackageNameManually() throws InterruptedException {
 		// Context of the app under test.
 		Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
