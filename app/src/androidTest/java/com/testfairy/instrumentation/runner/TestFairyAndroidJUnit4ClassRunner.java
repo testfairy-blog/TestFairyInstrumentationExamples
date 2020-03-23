@@ -1,9 +1,12 @@
 package com.testfairy.instrumentation.runner;
 
+import android.util.Log;
+
 import com.testfairy.TestFairy;
 import com.testfairy.instrumentation.utils.TestFairyInstrumentationUtil;
 
 import org.junit.runner.Description;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
@@ -33,8 +36,6 @@ public class TestFairyAndroidJUnit4ClassRunner extends AndroidJUnit4ClassRunner 
 	private final RunListener runListener = new RunListener() {
 		@Override
 		public void testStarted(Description description) throws Exception {
-			super.testStarted(description);
-
 			String name = null;
 
 			String className = description.getClassName();
@@ -51,12 +52,30 @@ public class TestFairyAndroidJUnit4ClassRunner extends AndroidJUnit4ClassRunner 
 			}
 
 			TestFairyInstrumentationUtil.startInstrumentation(name);
+
+			super.testStarted(description);
+		}
+
+		@Override
+		public void testAssumptionFailure(Failure failure) {
+			TestFairy.logThrowable(failure.getException());
+
+			super.testAssumptionFailure(failure);
+		}
+
+		@Override
+		public void testFailure(Failure failure) throws Exception {
+			TestFairy.logThrowable(failure.getException());
+
+			super.testFailure(failure);
 		}
 
 		@Override
 		public void testFinished(Description description) throws Exception {
-			super.testFinished(description);
 			TestFairyInstrumentationUtil.stopInstrumentation();
+
+			super.testFinished(description);
+
 		}
 	};
 }

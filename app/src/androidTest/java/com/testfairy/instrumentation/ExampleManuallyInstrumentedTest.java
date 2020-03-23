@@ -2,6 +2,7 @@ package com.testfairy.instrumentation;
 
 import android.content.Context;
 
+import com.testfairy.TestFairy;
 import com.testfairy.instrumentation.utils.TestFairyInstrumentationUtil;
 
 import org.junit.After;
@@ -40,13 +41,18 @@ public class ExampleManuallyInstrumentedTest extends ExampleTestsBase {
 
 	@Test
 	public void testAppContextPackageNameManually() throws InterruptedException {
-		// Context of the app under test.
-		Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+		try {
+			// Context of the app under test.
+			Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-		assertEquals("com.testfairy.instrumentation", appContext.getPackageName());
+			assertEquals("com.testfairy.instrumentation", appContext.getPackageName());
 
-		for (int i = 0; i < 3; i++) {
-			Thread.sleep(3000);
+			for (int i = 0; i < 3; i++) {
+				Thread.sleep(3000);
+			}
+		} catch (Throwable t) {
+			TestFairy.logThrowable(t);
+			throw t;
 		}
 	}
 }

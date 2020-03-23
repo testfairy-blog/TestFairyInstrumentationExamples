@@ -76,6 +76,8 @@ public class TestFairyInstrumentationUtil {
 		try {
 			startInstrumentation(name, options);
 			wrapper.onRecord();
+		} catch (Throwable t) {
+			TestFairy.logThrowable(t);
 		} finally {
 			stopInstrumentation();
 		}
