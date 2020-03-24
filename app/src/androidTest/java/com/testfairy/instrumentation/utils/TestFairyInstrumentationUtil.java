@@ -1,6 +1,7 @@
 package com.testfairy.instrumentation.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.testfairy.SessionStateListener;
 import com.testfairy.TestFairy;
@@ -18,6 +19,9 @@ import androidx.test.platform.app.InstrumentationRegistry;
  * Utilities to integrate TestFairy into a test suite
  */
 public class TestFairyInstrumentationUtil {
+
+	private static final String TAG = "TestFairyInstrumentation";
+
 	/**
 	 * App server endpoint
 	 */
@@ -125,12 +129,18 @@ public class TestFairyInstrumentationUtil {
 		}
 
 		safeSleep(1000);
+
+		Log.i(TAG, "You can inspect your instrumentation results here: " + TestFairy.getSessionUrl());
 	}
 
 	/**
 	 * Stops an instrumentation
 	 */
 	public static void stopInstrumentation() {
+		if (TestFairy.getSessionUrl() != null) {
+			Log.i(TAG, "You can inspect your instrumentation results here: " + TestFairy.getSessionUrl());
+		}
+
 		TestFairy.stop();
 
 		waitForTestFairyThreadsStop(10000);

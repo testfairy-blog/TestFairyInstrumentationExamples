@@ -24,6 +24,7 @@ public class ExampleInstrumentedTest extends ExampleTestsBase {
 		// Context of the app under test.
 		Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
+		// Will fail intentionally for demonstration purposes, checkout your device farm logs to get the session url.
 		assertEquals("com.testfairy.instrumentation", appContext.getPackageName() + ".wrong");
 	}
 }
