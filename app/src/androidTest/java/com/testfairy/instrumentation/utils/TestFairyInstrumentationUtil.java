@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -130,7 +132,11 @@ public class TestFairyInstrumentationUtil {
 
 		safeSleep(1000);
 
-		Log.i(TAG, "You can inspect your instrumentation results here: " + TestFairy.getSessionUrl());
+		Log.i(TAG, "Your TestFairy session: " +
+				shortenSessionUrl(TestFairy.getSessionUrl())
+		);
+
+		Log.i(TAG, "Instrumentation session url: " + TestFairy.getSessionUrl());
 	}
 
 	/**
@@ -138,7 +144,11 @@ public class TestFairyInstrumentationUtil {
 	 */
 	public static void stopInstrumentation() {
 		if (TestFairy.getSessionUrl() != null) {
-			Log.i(TAG, "You can inspect your instrumentation results here: " + TestFairy.getSessionUrl());
+			Log.i(TAG, "Your TestFairy session: " +
+					shortenSessionUrl(TestFairy.getSessionUrl())
+			);
+
+			Log.i(TAG, "Instrumentation session url: " + TestFairy.getSessionUrl());
 		}
 
 		TestFairy.stop();
@@ -159,6 +169,38 @@ public class TestFairyInstrumentationUtil {
 	}
 
 	////////////////////////////////////////////
+
+	private static final Pattern sessionUrlPattern = Pattern.compile("https:\\/\\/[\\w\\._-]+\\/projects\\/(\\d+)-[\\w-\\._]+\\/builds\\/(\\d+)\\/sessions\\/(\\d+)");
+
+	private static boolean notEmpty(String str) {
+		return str != null && str.length() > 0;
+	}
+
+	private static String shortenSessionUrl(String sessionUrl) {
+		if (sessionUrl == null) return "Unrecorded session";
+
+		try {
+			Matcher matcher = sessionUrlPattern.matcher(sessionUrl);
+
+			if (matcher.matches()) {
+				String project = matcher.group(1);
+				String build = matcher.group(2);
+				String session = matcher.group(3);
+
+				if (notEmpty(project) && notEmpty(build) && notEmpty(session)) {
+					return String.format("https://tsfr.io/s/%s/%s/%s", project, build, session);
+				}
+
+				throw new NullPointerException("There are empty groups in the session url: " +
+						String.format("https://tsfr.io/s/%s/%s/%s", project, build, session));
+			} else {
+				throw new IllegalArgumentException("Session url is unrecognized: " + sessionUrl);
+			}
+		} catch (Throwable t) {
+			Log.w(TAG, "Session url cannot be shortened.", t);
+			return sessionUrl;
+		}
+	}
 
 	private static void waitForTestFairyThreadsStop(int timeToWait) {
 		long end = System.currentTimeMillis() + timeToWait * 1000;
