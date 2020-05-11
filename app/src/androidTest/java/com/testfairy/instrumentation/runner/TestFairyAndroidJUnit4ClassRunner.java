@@ -58,14 +58,14 @@ public class TestFairyAndroidJUnit4ClassRunner extends AndroidJUnit4ClassRunner 
 
 		@Override
 		public void testAssumptionFailure(Failure failure) {
-			TestFairy.logThrowable(failure.getException());
+			TestFairyInstrumentationUtil.logThrowable(failure.getException());
 
 			super.testAssumptionFailure(failure);
 		}
 
 		@Override
 		public void testFailure(Failure failure) throws Exception {
-			TestFairy.logThrowable(failure.getException());
+			TestFairyInstrumentationUtil.logThrowable(failure.getException());
 
 			super.testFailure(failure);
 		}

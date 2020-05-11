@@ -9,6 +9,6 @@ import com.testfairy.instrumentation.utils.TestFairyInstrumentationUtil;
 public class ExampleTestsBase {
 
 	public ExampleTestsBase() {
-		TestFairyInstrumentationUtil.setup("");
+		TestFairyInstrumentationUtil.setup("SDK-gLeZiE9i");
 	}
 }

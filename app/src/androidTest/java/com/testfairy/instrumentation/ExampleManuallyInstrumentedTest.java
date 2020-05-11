@@ -51,7 +51,7 @@ public class ExampleManuallyInstrumentedTest extends ExampleTestsBase {
 				Thread.sleep(3000);
 			}
 		} catch (Throwable t) {
-			TestFairy.logThrowable(t);
+			TestFairyInstrumentationUtil.logThrowable(t);
 			throw t;
 		}
 	}

@@ -83,7 +83,7 @@ public class TestFairyInstrumentationUtil {
 			startInstrumentation(name, options);
 			wrapper.onRecord();
 		} catch (Throwable t) {
-			TestFairy.logThrowable(t);
+			logThrowable(t);
 		} finally {
 			stopInstrumentation();
 		}
@@ -166,6 +166,11 @@ public class TestFairyInstrumentationUtil {
 		} catch (InterruptedException ie) {
 			// ignored
 		}
+	}
+
+	public static void logThrowable(Throwable t) {
+		TestFairy.logThrowable(t);
+		Log.e(TAG, "TestFairy detected an exception: ", t);
 	}
 
 	////////////////////////////////////////////
